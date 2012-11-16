@@ -34,6 +34,7 @@ class iPosts {
 
 	function options($post)
 	{
+		$app_id = get_post_meta($post->ID, 'app_id', true);
 		$tip = __("Is this post about an iOS app? Enter the iOS app ID here, and you can have information automattically imported into this post for you.  Once you enter an ID, more publishing options will become available.", 'iposts');
 		$options = array(
 			'screenshots' => __("Add screenshots to gallery", 'iposts'),
@@ -86,6 +87,8 @@ class iPosts {
 		));
 
 		$app_id = trim($options['app_id']);
+
+		if ($app_id == get_post_meta($post_id, 'app_id', true)) return $post_id;
 
 		$results = $this->app_search($app_id);
 
