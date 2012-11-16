@@ -71,12 +71,12 @@ class iPosts {
 
 	function save($post_id)
 	{
-		if (wp_is_post_revision($post_id)) return $post_id;
-		if (!isset($_REQUEST['iposts_nonce'])) return $post_id;
-		if (!wp_verify_nonce($_REQUEST['iposts_nonce'], plugin_basename(__FILE__))) return $post_id;
-		if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return $post_id;
-		if (!current_user_can('edit_post', $post_id)) return $post_id;
-		if (!isset($_REQUEST['iposts'])) return $post_id;
+		if (wp_is_post_revision($post_id)) return;
+		if (!isset($_REQUEST['iposts_nonce'])) return;
+		if (!wp_verify_nonce($_REQUEST['iposts_nonce'], plugin_basename(__FILE__))) return;
+		if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+		if (!current_user_can('edit_post', $post_id)) return;
+		if (!isset($_REQUEST['iposts'])) return;
 
 		$options = wp_parse_args($_REQUEST['iposts'], array(
 			'app_id' => false,
@@ -88,13 +88,13 @@ class iPosts {
 
 		$app_id = trim($options['app_id']);
 
-		if ($app_id == get_post_meta($post_id, 'app_id', true)) return $post_id;
+		if ($app_id == get_post_meta($post_id, 'app_id', true)) return;
 
 		$results = $this->app_search($app_id);
 
 		if (!$results) {
 			// TODO: Display error to user
-			return $post_id;
+			return;
 		}
 
 		$app_meta = $results[0];
@@ -147,8 +147,6 @@ class iPosts {
 				);
 			}
 		}
-
-		return $post_id;
 	}
 
 	function app_search($search)
