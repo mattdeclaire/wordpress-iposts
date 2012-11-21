@@ -17,8 +17,10 @@ define('IPOSTS_PLUGIN_URL', plugin_dir_url(__FILE__));
 class iPosts {
 	function __construct()
 	{
+		if (!session_id()) session_start();
 		add_action('post_submitbox_misc_actions', array($this, 'publish_options'));
 		add_action('save_post', array($this, 'save'));
+		add_action('admin_notices', array($this, 'admin_notices'));
 		add_action('admin_enqueue_scripts', array($this, 'enqueue'));
 	}
 
@@ -93,7 +95,7 @@ class iPosts {
 		$results = $this->app_search($app_id);
 
 		if (!$results) {
-			// TODO: Display error to user
+			$_SESSION['iposts']['save_post']['errors'][] = __("App ID $app_id not found", 'iposts');
 			return;
 		}
 
@@ -176,6 +178,19 @@ class iPosts {
 					update_post_meta($attachment_id, '_app_screenshot_original_url', $screenshot);
 				}
 			}
+		}
+	}
+
+	function admin_notices()
+	{
+		if (isset($_SESSION['iposts']['save_post']['errors'])) {
+			foreach ($_SESSION['iposts']['save_post']['errors'] as $error) { ?>
+				<div class="error">
+					<p><?=$error?></p>
+				</div>
+			<?php }
+
+			unset($_SESSION['iposts']['save_post']['errors']);
 		}
 	}
 
