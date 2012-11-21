@@ -34,11 +34,11 @@ class iPosts {
 
 	function options($post)
 	{
-		$app_id = get_post_meta($post->ID, 'app_id', true);
+		$app_id = get_post_meta($post->ID, '_app_id', true);
 		$tip = __("Is this post about an iOS app? Enter the iOS app ID here, and you can have information automattically imported into this post for you.  Once you enter an ID, more publishing options will become available.", 'iposts');
 		$options = array(
 			'screenshots' => __("Add screenshots to gallery", 'iposts'),
-			'meta-data' => __("Set meta data", 'iposts'),
+			'meta' => __("Set meta data", 'iposts'),
 			'categories' => __("Set categories", 'iposts'),
 			'icon' => __("Set icon as featured image", 'iposts'),
 		);
@@ -80,7 +80,7 @@ class iPosts {
 
 		$options = wp_parse_args($_REQUEST['iposts'], array(
 			'app_id' => false,
-			'meta-data' => false,
+			'meta' => false,
 			'categories' => false,
 			'icon' => false,
 			'screenshots' => false,
@@ -100,7 +100,10 @@ class iPosts {
 		$app_meta = $results[0];
 		$post = get_post($post_id);
 
-		if ($options['app-meta']) {
+		// underscore field saved regardless of "save meta" option
+		update_post_meta($post_id, '_app_id', $app_id);
+		
+		if ($options['meta'] && $app_meta) {
 			update_post_meta($post_id, 'app_id', $app_id);
 			update_post_meta($post_id, 'app_title', $app_meta->trackName);
 			update_post_meta($post_id, 'app_author', $app_meta->artistName);
