@@ -64,7 +64,7 @@ class iPosts {
 
 	function enqueue($hook)
 	{
-		if ($hook != 'post.php') return;
+		if (!in_array($hook, array('post.php', 'post-new.php'))) return;
 		wp_register_script('iposts', IPOSTS_PLUGIN_URL.'iposts.js', array('jquery'), IPOSTS_VERSION);
 		wp_enqueue_script('iposts');
 	}
@@ -151,9 +151,6 @@ class iPosts {
 
 	function app_search($search)
 	{
-		$params = wp_parse_args($params, array(
-		));
-
 		$url = "https://itunes.apple.com/lookup?".http_build_query(array(
 			'id' => $search,
 			'country' => 'us',
