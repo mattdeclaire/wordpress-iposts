@@ -88,7 +88,7 @@ class iPosts {
 
 		$app_id = trim($options['app_id']);
 
-		if ($app_id == get_post_meta($post_id, 'app_id', true)) return;
+		if ($app_id == get_post_meta($post_id, '_app_id', true)) return;
 
 		$results = $this->app_search($app_id);
 
@@ -122,16 +122,34 @@ class iPosts {
 			wp_set_post_terms($post_id, $app_meta->genres);
 		}
 
-		if ($options['icon'] && $attachment_id = $this->import_photo(
-			$app_meta->artworkUrl512,
-			"$post->post_title app icon",
-			$post_id,
-			"app-icon-$post_id-"
-		)) {
-			set_post_thumbnail($post_id, $attachment_id);
+		if ($options['icon']) {
+			if ($app_meta->artworkUrl512 != get_post_meta(get_post_thumbnail_id($post_id), '_app_icon_original_url', true)) {
+				$attachment_id = $this->import_photo(
+					$app_meta->artworkUrl512,
+					"$post->post_title app icon",
+					$post_id,
+					"app-icon-$post_id-"
+				);
+
+				if ($attachment_id) {
+					set_post_thumbnail($post_id, $attachment_id);
+					update_post_meta($attachment_id, '_app_icon_original_url', $app_meta->artworkUrl512);
+				}
+			}
 		}
 
 		if ($options['screenshots']) {
+			$existing_screenhots = array();
+			foreach (get_children(array(
+				'post_parent' => $post_id,
+				'post_type' => 'attachment',
+				'post_mine_type' => 'image',
+			)) as $screenshot) {
+				if ($url = get_post_meta($screenshot->ID, '_app_screenshot_original_url', true)) {
+					$existing_screenhots[] = $url;
+				}
+			}
+
 			foreach (array(
 				array(
 					'app_meta_key' => 'screenshotUrls',
@@ -146,12 +164,16 @@ class iPosts {
 			) as $values) {
 				extract($values);
 				foreach ($app_meta->$app_meta_key as $ndx => $screenshot) {
-					$this->import_photo(
+					if (in_array($screenshot, $existing_screenhots)) continue;
+
+					$attachment_id = $this->import_photo(
 						$screenshot,
 						"$post->post_title $title ".($ndx+1),
 						$post_id,
 						"app-$slug-$post_id-"
 					);
+
+					update_post_meta($attachment_id, '_app_screenshot_original_url', $screenshot);
 				}
 			}
 		}
