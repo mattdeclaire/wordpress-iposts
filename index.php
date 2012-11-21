@@ -132,22 +132,27 @@ class iPosts {
 		}
 
 		if ($options['screenshots']) {
-			foreach ($app_meta->screenshotUrls as $ndx => $iphone_screenshot) {
-				$this->import_photo(
-					$iphone_screenshot,
-					"$post->post_title iPhone screenshot ".($ndx+1),
-					$post_id,
-					"app-iphone-screenshot-$post_id-"
-				);
-			}
-
-			foreach ($app_meta->ipadScreenshotUrls as $ndx => $ipad_screenshot) {
-				$this->import_photo(
-					$ipad_screenshot,
-					"$post->post_title iPad screenshot ".($ndx+1),
-					$post_id,
-					"app-ipad-screenshot-$post_id-"
-				);
+			foreach (array(
+				array(
+					'app_meta_key' => 'screenshotUrls',
+					'title' => __("iPhone screenshot", 'iposts'),
+					'slug' => 'iphone-screenshot',
+				),
+				array(
+					'app_meta_key' => 'ipadScreenshotUrls',
+					'title' => __("iPad screenshot", 'iposts'),
+					'slug' => 'ipad-screenshot',
+				),
+			) as $values) {
+				extract($values);
+				foreach ($app_meta->$app_meta_key as $ndx => $screenshot) {
+					$this->import_photo(
+						$screenshot,
+						"$post->post_title $title ".($ndx+1),
+						$post_id,
+						"app-$slug-$post_id-"
+					);
+				}
 			}
 		}
 	}
