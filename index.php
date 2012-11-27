@@ -48,18 +48,18 @@ class iPosts {
 		wp_nonce_field(plugin_basename(__FILE__), 'iposts_nonce');
 		?>
 
-		<p>
-			<label><?=__("App ID", 'iposts')?></label>
-			<input type="text" name="iposts[app_id]" value="<?=esc_attr($app_id)?>" />
-			<a href="#" class="iposts-tip" title="<?=esc_attr($tip)?>">?</a>
-		</p>
+		<label><?=__("App ID", 'iposts')?></label>
+		<input type="text" name="iposts[app_id]" value="<?=esc_attr($app_id)?>" />
+		<a href="#" class="iposts-tip" title="<?=esc_attr($tip)?>">?</a>
 
-		<p id="iposts-publish-options">
+		<ul id="iposts-publish-options">
 			<?php foreach ($options as $option => $text): ?>
-				<input type="checkbox" name="iposts[<?=$option?>]" id="iposts-<?=$option?>" checked />
-				<label for="iposts-<?=$option?>"><?=$text?></label><br />
+				<li>
+					<input type="checkbox" name="iposts[<?=$option?>]" id="iposts-<?=$option?>" checked />
+					<label for="iposts-<?=$option?>"><?=$text?></label>
+				</li>
 			<?php endforeach; ?>
-		</p>
+		</ul>
 
 		<?php
 	}
