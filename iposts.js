@@ -1,8 +1,12 @@
 jQuery(function($) {
 	var options = $('#iposts-publish-options').hide();
-	$("[name=iposts\\[app_id\\]]").change(function() {
+	$("[name=iposts\\[app_id\\]]").keyup(function() {
 		this.value = this.value.replace(/[^0-9]/g, '');
-		options.slideToggle(this.value.length);
+		if (this.value.length) {
+			options.slideDown();
+		} else {
+			options.slideUp();
+		}
 	});
 
 	$('.iposts-tip').click(function() {
