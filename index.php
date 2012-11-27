@@ -39,10 +39,10 @@ class iPosts {
 		$app_id = get_post_meta($post->ID, '_app_id', true);
 		$tip = __("Is this post about an iOS app? Enter the iOS app ID here, and you can have information automattically imported into this post for you.  Once you enter an ID, more publishing options will become available.", 'iposts');
 		$options = array(
-			'screenshots' => __("Add screenshots to gallery", 'iposts'),
-			'meta' => __("Set meta data", 'iposts'),
-			'categories' => __("Set categories", 'iposts'),
-			'icon' => __("Set icon as featured image", 'iposts'),
+			'icon' => __("Import app icon as featured image", 'iposts'),
+			'screenshots' => __("Import app screenshots into gallery", 'iposts'),
+			'meta' => __("Import app information into custom fields", 'iposts'),
+			'tags' => __("Import app genres into tags", 'iposts'),
 		);
 
 		wp_nonce_field(plugin_basename(__FILE__), 'iposts_nonce');
@@ -83,7 +83,7 @@ class iPosts {
 		$options = wp_parse_args($_REQUEST['iposts'], array(
 			'app_id' => false,
 			'meta' => false,
-			'categories' => false,
+			'tags' => false,
 			'icon' => false,
 			'screenshots' => false,
 		));
@@ -120,7 +120,7 @@ class iPosts {
 			update_post_meta($post_id, 'app_rating_count', $app_meta->userRatingCount);
 		}
 
-		if ($options['categories']) {
+		if ($options['tags']) {
 			wp_set_post_terms($post_id, $app_meta->genres);
 		}
 
